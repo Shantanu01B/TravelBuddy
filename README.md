@@ -135,22 +135,7 @@ npm run dev
 
 ---
 
-## 📤 How to Push Changes to GitHub
 
-Whenever you make changes to your project, run these 4 simple commands in your terminal:
-
-```bash
-# Step 1: Check status of changed files
-git status
-
-# Step 2: Add all files
-git add .
-
-# Step 3: Commit with a short message
-git commit -m "Updated TravelBuddy README and features"
-
-# Step 4: Push to GitHub
-git push origin main
 ```
 
 ---
