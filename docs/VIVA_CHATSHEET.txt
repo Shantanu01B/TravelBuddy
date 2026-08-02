@@ -1,0 +1,33 @@
+===================================================================
+             TRAVELBUDDY - QUICK INTERVIEW REVISION CHEAT SHEET
+===================================================================
+
+[1] ARCHITECTURE:
+    - Tech Stack: MongoDB, Express.js, React (Vite), Node.js, Tailwind CSS
+    - Pattern: MVC (Model-View-Controller)
+    - Auth: JWT Bearer Token + bcryptjs password hashing (10 salt rounds)
+
+[2] ROUTE STOP MATCHING ALGORITHM:
+    - Ordered array in DB: routeStops = [{ stopName, pickupPoint, stopOrder }]
+    - Match Logic: 
+      pickupIndex = routeStops.findIndex(pickup)
+      dropIndex   = routeStops.findIndex(drop)
+      Match = (pickupIndex != -1 && dropIndex != -1 && pickupIndex < dropIndex)
+
+[3] TRUST SCORE FORMULA (0 - 100):
+    - 40% Average Rating (0-5 stars)
+    - 30% Ride Completion Rate (% accepted rides finished)
+    - 20% Low Cancellation Rate (% rides not cancelled)
+    - 10% Positive Review Count Bonus
+
+[4] EXPENSE SPLITTER MATH:
+    - perPersonAmount = (totalAmount / splitBetween.length)
+    - Group spend & category totals computed via Array.reduce()
+
+[5] DATABASE SCHEMAS & POPULATE:
+    - User Schema: name, email, password, organization, vehicle, trustScore, badges
+    - RidePost Schema: driver (ref User), vehicleType, routeStops[], date, seats, price
+    - RideRequest Schema: ride (ref RidePost), passenger (ref User), driver, status
+    - Mongoose Populate: .populate('driver', 'name avatar trustScore')
+
+===================================================================
