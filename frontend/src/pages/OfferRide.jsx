@@ -1,14 +1,14 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { Car, Bike, Plus, Trash2, MapPin, Calendar, Clock, DollarSign, AlertCircle, ArrowRight, Navigation } from 'lucide-react';
+import { Plus, Trash2, AlertCircle, ArrowRight } from 'lucide-react';
 import API from '../services/api';
 
 const OfferRide = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [vehicleType, setVehicleType] = useState(user?.vehicle?.type || 'Car');
+  const [vehicleType, setVehicleType] = useState(user?.vehicle?.type && user?.vehicle?.type !== 'None' ? user.vehicle.type : 'Car');
   const [vehicleName, setVehicleName] = useState(user?.vehicle?.makeModel || 'Honda City');
   const [source, setSource] = useState('Chinchwad');
   const [destination, setDestination] = useState('Ravet');
@@ -98,15 +98,15 @@ const OfferRide = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200/90 card-shadow">
+      <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-xl">
         
         <div className="mb-8 border-b border-slate-100 pb-4">
-          <span className="text-xs font-extrabold text-indigo-600 uppercase tracking-widest block mb-1">
-            Share Seats & Split Auto / Cab Fares
+          <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider block mb-1">
+            Share Seats & Split Fares
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Offer Ride or Post Auto / Cab Split</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Offer Ride or Post Fare Split</h1>
           <p className="text-xs text-slate-500 mt-1">
-            Publish your carpool, bike commute, or post an 🛺 <strong>Auto / Cab Fare Split</strong> to travel together and split payment!
+            Publish your empty vehicle seats or post an auto/cab split to travel together.
           </p>
         </div>
 
@@ -120,22 +120,22 @@ const OfferRide = () => {
         <form onSubmit={handleSubmit} className="space-y-6 text-xs">
           
           <div>
-            <label className="font-bold text-slate-700 block mb-2">Select Commute / Share Type</label>
+            <label className="font-bold text-slate-700 block mb-2">Commute / Vehicle Type</label>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
               {[
-                { type: 'Car', label: '🚗 Carpool' },
-                { type: 'Bike', label: '🏍️ Bike Ride' },
-                { type: 'Scooter', label: '🛵 Scooter' },
-                { type: 'Auto Share', label: '🛺 Auto Split' },
-                { type: 'Cab Share', label: '🚕 Cab / Uber' }
+                { type: 'Car', label: 'Carpool', activeColor: 'bg-emerald-600 text-white border-emerald-600' },
+                { type: 'Bike', label: 'Bike Ride', activeColor: 'bg-indigo-600 text-white border-indigo-600' },
+                { type: 'Scooter', label: 'Scooter', activeColor: 'bg-teal-600 text-white border-teal-600' },
+                { type: 'Auto Share', label: 'Auto Split', activeColor: 'bg-amber-600 text-white border-amber-600' },
+                { type: 'Cab Share', label: 'Cab Split', activeColor: 'bg-sky-600 text-white border-sky-600' }
               ].map(item => (
                 <button
                   type="button"
                   key={item.type}
                   onClick={() => handleVehicleTypeSelect(item.type)}
-                  className={`py-2.5 px-3 rounded-xl font-bold border transition-all text-xs flex items-center justify-center gap-1 ${
+                  className={`py-2 px-3 rounded-xl font-bold border transition-all text-xs flex items-center justify-center ${
                     vehicleType === item.type
-                      ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500 text-white border-transparent shadow-md'
+                      ? `${item.activeColor} shadow-xs`
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
@@ -154,7 +154,7 @@ const OfferRide = () => {
                 value={vehicleName}
                 onChange={(e) => setVehicleName(e.target.value)}
                 placeholder="e.g. Honda City or Auto Rickshaw Split"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white transition-colors"
               />
             </div>
 
@@ -166,13 +166,13 @@ const OfferRide = () => {
                 value={community}
                 onChange={(e) => setCommunity(e.target.value)}
                 placeholder="e.g. PCCOER, Infosys"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white transition-colors"
               />
             </div>
           </div>
 
           {/* Ordered Route Stops */}
-          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80">
+          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h3 className="font-bold text-slate-800 uppercase tracking-wider text-[11px]">
@@ -186,17 +186,19 @@ const OfferRide = () => {
               <button
                 type="button"
                 onClick={handleAddStop}
-                className="flex items-center gap-1 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-xl hover:bg-indigo-100 transition-colors"
+                className="flex items-center gap-1 text-xs font-bold text-slate-800 bg-white border border-slate-200 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition-colors shadow-2xs"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Add Stop</span>
               </button>
             </div>
 
             <div className="space-y-3">
               {routeStops.map((stop, idx) => (
-                <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200">
-                  <div className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+                  <div className={`w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center flex-shrink-0 ${
+                    idx === 0 ? 'bg-emerald-600' : idx === routeStops.length - 1 ? 'bg-rose-600' : 'bg-slate-700'
+                  }`}>
                     {idx + 1}
                   </div>
 
@@ -207,7 +209,7 @@ const OfferRide = () => {
                       placeholder={`Stop ${idx + 1} Name`}
                       value={stop.stopName}
                       onChange={(e) => handleStopChange(idx, 'stopName', e.target.value)}
-                      className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none"
+                      className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white"
                     />
 
                     <input
@@ -215,7 +217,7 @@ const OfferRide = () => {
                       placeholder="Optional Landmark / Pickup Stand"
                       value={stop.pickupPoint}
                       onChange={(e) => handleStopChange(idx, 'pickupPoint', e.target.value)}
-                      className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none"
+                      className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white"
                     />
                   </div>
 
@@ -241,7 +243,7 @@ const OfferRide = () => {
                 required
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white"
               />
             </div>
 
@@ -253,7 +255,7 @@ const OfferRide = () => {
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
                 placeholder="e.g. 08:30 AM"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white"
               />
             </div>
 
@@ -266,7 +268,7 @@ const OfferRide = () => {
                 required
                 value={totalSeats}
                 onChange={(e) => setTotalSeats(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white"
               />
             </div>
 
@@ -278,7 +280,7 @@ const OfferRide = () => {
                 required
                 value={pricePerSeat}
                 onChange={(e) => setPricePerSeat(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white"
               />
             </div>
           </div>
@@ -290,17 +292,17 @@ const OfferRide = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g. Booking an Auto from Chinchwad Station. Looking for 2 passengers to split ₹90 fare evenly (₹30 per person)..."
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500 hover:from-indigo-700 hover:to-rose-600 text-white font-extrabold py-3.5 rounded-xl text-xs transition-all shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2"
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition-all shadow-md shadow-slate-900/10 flex items-center justify-center gap-2"
           >
-            <span>{loading ? 'Publishing Ride Share...' : 'Publish Ride / Auto Share'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>{loading ? 'Publishing...' : 'Publish Ride Listing'}</span>
+            <ArrowRight className="w-4 h-4 text-emerald-400" />
           </button>
 
         </form>

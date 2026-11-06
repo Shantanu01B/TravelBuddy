@@ -44,6 +44,11 @@ const tripSchema = new mongoose.Schema(
       type: String,
       enum: ['Upcoming', 'Completed', 'Cancelled'],
       default: 'Upcoming'
+    },
+    // Optional AI Itinerary and Budget Details generated via Gemini
+    aiPlan: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null
     }
   },
   {

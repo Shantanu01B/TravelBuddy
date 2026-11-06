@@ -2,8 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import Sidebar from './components/Sidebar';
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute';
 
 import Home from './pages/Home';
@@ -24,9 +23,9 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen flex flex-col bg-slate-50">
-          <Navbar />
-          <main className="flex-grow">
+        <div className="min-h-screen flex flex-col lg:flex-row bg-[#fafafc] text-slate-800">
+          <Sidebar />
+          <main className="flex-1 min-w-0">
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
@@ -52,7 +51,6 @@ function App() {
               </Route>
             </Routes>
           </main>
-          <Footer />
         </div>
       </Router>
     </AuthProvider>

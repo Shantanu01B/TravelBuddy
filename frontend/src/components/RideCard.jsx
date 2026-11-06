@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Car, Bike, Calendar, Clock, UserCheck, ChevronRight, Building, Navigation } from 'lucide-react';
+import { Car, Bike, Calendar, Clock, ChevronRight, Building, Users, User } from 'lucide-react';
 import TrustScoreBadge from './TrustScoreBadge';
-import RouteStopsTimeline from './RouteStopsTimeline';
 
 const RideCard = ({ ride, searchPickup = '', searchDrop = '' }) => {
   const {
@@ -10,8 +9,6 @@ const RideCard = ({ ride, searchPickup = '', searchDrop = '' }) => {
     driver,
     vehicleType,
     vehicleName,
-    source,
-    destination,
     routeStops,
     date,
     time,
@@ -22,102 +19,115 @@ const RideCard = ({ ride, searchPickup = '', searchDrop = '' }) => {
 
   const isAutoShare = vehicleType === 'Auto Share' || vehicleName?.toLowerCase().includes('auto');
   const isCabShare = vehicleType === 'Cab Share' || vehicleName?.toLowerCase().includes('cab') || vehicleName?.toLowerCase().includes('uber');
+  const isBike = vehicleType === 'Bike';
+
+  const pickupStop = routeStops && routeStops.length > 0 ? routeStops[0].stopName : 'Origin';
+  const dropStop = routeStops && routeStops.length > 0 ? routeStops[routeStops.length - 1].stopName : 'Destination';
 
   return (
-    <div className="bg-white rounded-3xl p-6 border border-slate-200/90 card-shadow card-hover flex flex-col justify-between relative overflow-hidden group">
+    <div className="card-clean card-clean-hover rounded-2xl overflow-hidden flex flex-col justify-between group transition-all duration-300">
       
-      {/* Accent top gradient line */}
-      <div className={`absolute top-0 left-0 right-0 h-1 ${
-        isAutoShare
-          ? 'bg-gradient-to-r from-amber-500 to-rose-500'
-          : isCabShare
-          ? 'bg-gradient-to-r from-purple-600 to-rose-500'
-          : 'bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500'
-      }`} />
-
-      <div>
-        {/* Header: Driver / Poster Info & Community Badge */}
-        <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
+      {/* Top Banner & Driver Header */}
+      <div className="p-5 pb-4">
+        <div className="flex items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
-            <img
-              src={driver?.avatar || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150'}
-              alt={driver?.name || 'Commuter'}
-              className="w-11 h-11 rounded-2xl object-cover border-2 border-indigo-500/20 shadow-xs"
-            />
+            <div className="relative">
+              <div className="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 flex-shrink-0">
+                <User className="w-5 h-5" />
+              </div>
+              <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" />
+            </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-slate-900 text-base leading-tight">
+                <h4 className="font-bold text-slate-900 text-sm tracking-tight">
                   {driver?.name || 'Commuter'}
-                </h3>
+                </h4>
                 {driver?.trustScore && <TrustScoreBadge score={driver.trustScore} showLabel={false} />}
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
-                <span className="flex items-center gap-1 font-bold text-indigo-700">
-                  <Building className="w-3 h-3 text-indigo-600" />
-                  {community || driver?.organization || 'General Commuter'}
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1 font-bold text-slate-700">
-                  {isAutoShare ? '🛺 Auto Split' : isCabShare ? '🚕 Cab Split' : vehicleType === 'Bike' ? '🏍️ Bike' : '🚗 Carpool'}
-                </span>
+              <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium mt-0.5">
+                <Building className="w-3 h-3 text-indigo-500 flex-shrink-0" />
+                <span className="truncate max-w-[150px]">{community || driver?.organization || 'Verified Commuter'}</span>
               </div>
             </div>
           </div>
 
+          {/* Vehicle Category Pill */}
           <div className="text-right">
-            <span className="text-2xl font-black text-gradient-sunset">₹{pricePerSeat}</span>
-            <span className="text-[10px] text-slate-400 block font-semibold">per person</span>
-          </div>
-        </div>
-
-        {/* Auto Share Badge Callout */}
-        {(isAutoShare || isCabShare) && (
-          <div className="mb-4 p-2.5 rounded-2xl bg-amber-50 border border-amber-200/80 flex items-center gap-2 text-xs font-bold text-amber-900">
-            <span className="text-base">{isAutoShare ? '🛺' : '🚕'}</span>
-            <span>{isAutoShare ? 'Auto Rickshaw Fare Split Post' : 'Cab / Uber Fare Split Post'}</span>
-          </div>
-        )}
-
-        {/* Route Overview */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">
-            <span>ROUTE STOPS & PICKUPS</span>
-            <span className="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md font-bold">
-              {routeStops?.length || 2} Stops
+            <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${
+              isAutoShare
+                ? 'bg-amber-50 text-amber-800 border-amber-200'
+                : isCabShare
+                ? 'bg-sky-50 text-sky-800 border-sky-200'
+                : isBike
+                ? 'bg-indigo-50 text-indigo-800 border-indigo-200'
+                : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+            }`}>
+              {isAutoShare ? 'Auto Split' : isCabShare ? 'Cab Split' : isBike ? 'Bike Pool' : 'Carpool'}
             </span>
           </div>
-          <RouteStopsTimeline
-            routeStops={routeStops}
-            highlightPickup={searchPickup}
-            highlightDrop={searchDrop}
-          />
         </div>
 
-        {/* Date, Time & Seat Info */}
-        <div className="flex flex-wrap items-center justify-between bg-slate-50 rounded-2xl px-3.5 py-2.5 text-xs font-semibold text-slate-600 gap-2 mb-5 border border-slate-100">
-          <div className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-indigo-600" />
-            <span>{date}</span>
+        {/* Route Title */}
+        <div className="mb-4">
+          <h3 className="text-base font-black text-slate-900 group-hover:text-indigo-600 transition-colors flex items-center gap-2">
+            <span>{pickupStop}</span>
+            <span className="text-slate-400">→</span>
+            <span>{dropStop}</span>
+          </h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            {vehicleName || (isBike ? 'Two-Wheeler' : 'Personal Vehicle')} • Departure {time}
+          </p>
+        </div>
+
+        {/* Structured Route Breakdown Box */}
+        <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3 mb-4 space-y-2">
+          <div className="text-[10px] font-black uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-1.5 flex justify-between items-center">
+            <span>Route & Fare Breakdown</span>
+            <span className="text-slate-500 font-medium">{date}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-purple-600" />
-            <span>{time}</span>
+
+          <div className="flex items-center justify-between text-xs py-0.5">
+            <span className="text-slate-500 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Pickup
+            </span>
+            <span className="font-semibold text-slate-800 text-right truncate max-w-[160px]">{pickupStop}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <UserCheck className="w-3.5 h-3.5 text-rose-500" />
-            <span className="font-extrabold text-slate-800">{availableSeats} spot(s) left</span>
+
+          <div className="flex items-center justify-between text-xs py-0.5">
+            <span className="text-slate-500 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              Drop Point
+            </span>
+            <span className="font-semibold text-slate-800 text-right truncate max-w-[160px]">{dropStop}</span>
+          </div>
+
+          <div className="flex items-center justify-between text-xs py-0.5">
+            <span className="text-slate-500 flex items-center gap-1.5">
+              <Users className="w-3 h-3 text-sky-500" />
+              Available Seats
+            </span>
+            <span className="font-bold text-slate-800">{availableSeats} seat(s) open</span>
+          </div>
+
+          <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200">
+            <span className="text-slate-600 font-medium">Cost Contribution</span>
+            <span className="text-sm font-black text-slate-900">₹{pricePerSeat} <span className="text-[10px] text-slate-500 font-normal">/ seat</span></span>
           </div>
         </div>
       </div>
 
-      {/* Action CTA with Sunset Indigo Gradient */}
-      <Link
-        to={`/rides/${_id}`}
-        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500 hover:from-indigo-700 hover:to-rose-600 text-white py-3 px-4 rounded-2xl text-xs font-extrabold shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.02]"
-      >
-        <span>View Route & Join Share</span>
-        <ChevronRight className="w-4 h-4" />
-      </Link>
+      {/* Action CTA */}
+      <div className="p-5 pt-0">
+        <Link
+          to={`/rides/${_id}`}
+          className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-xs"
+        >
+          <span>View Ride Details</span>
+          <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+        </Link>
+      </div>
+
     </div>
   );
 };

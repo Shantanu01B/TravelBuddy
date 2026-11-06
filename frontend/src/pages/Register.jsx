@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { Car, Mail, Lock, User, Building, AlertCircle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Car, Mail, Lock, User, Building, AlertCircle, ArrowRight } from 'lucide-react';
 
 const Register = () => {
   const { register, loading } = useContext(AuthContext);
@@ -53,16 +53,18 @@ const Register = () => {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-xl w-full bg-white p-8 sm:p-10 rounded-2xl border border-slate-200/90 shadow-sm">
+      <div className="card-clean max-w-xl w-full p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xl">
         
         <div className="mb-8">
           <div className="flex items-center gap-2.5 mb-2">
-            <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold">
-              <Car className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-sm">
+              <Car className="w-5 h-5 text-emerald-400" />
             </div>
-            <span className="text-xl font-bold text-slate-900 tracking-tight">TravelBuddy</span>
+            <span className="text-xl font-black text-slate-900 tracking-tight">
+              Travel<span className="text-indigo-600">Buddy</span>
+            </span>
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Create your account</h2>
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Create your account</h2>
           <p className="text-xs text-slate-500 mt-1">Join your college or corporate commuter network</p>
         </div>
 
@@ -78,8 +80,8 @@ const Register = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="font-semibold text-slate-700 block mb-1">Full Name *</label>
-              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-slate-400">
-                <User className="w-4 h-4 text-slate-400 mr-2" />
+              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-indigo-500 focus-within:bg-white transition-colors">
+                <User className="w-4 h-4 text-indigo-600 mr-2" />
                 <input
                   type="text"
                   required
@@ -87,15 +89,15 @@ const Register = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="e.g. Rahul Sharma"
-                  className="bg-transparent text-xs text-slate-800 outline-none w-full"
+                  className="bg-transparent text-xs text-slate-900 outline-none w-full placeholder:text-slate-400 font-semibold"
                 />
               </div>
             </div>
 
             <div>
               <label className="font-semibold text-slate-700 block mb-1">Email Address *</label>
-              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-slate-400">
-                <Mail className="w-4 h-4 text-slate-400 mr-2" />
+              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-indigo-500 focus-within:bg-white transition-colors">
+                <Mail className="w-4 h-4 text-indigo-600 mr-2" />
                 <input
                   type="email"
                   required
@@ -103,7 +105,7 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="rahul@pccoer.edu.in"
-                  className="bg-transparent text-xs text-slate-800 outline-none w-full"
+                  className="bg-transparent text-xs text-slate-900 outline-none w-full placeholder:text-slate-400 font-semibold"
                 />
               </div>
             </div>
@@ -112,8 +114,8 @@ const Register = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="font-semibold text-slate-700 block mb-1">Password *</label>
-              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-slate-400">
-                <Lock className="w-4 h-4 text-slate-400 mr-2" />
+              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-indigo-500 focus-within:bg-white transition-colors">
+                <Lock className="w-4 h-4 text-indigo-600 mr-2" />
                 <input
                   type="password"
                   required
@@ -122,7 +124,7 @@ const Register = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="At least 6 characters"
-                  className="bg-transparent text-xs text-slate-800 outline-none w-full"
+                  className="bg-transparent text-xs text-slate-900 outline-none w-full placeholder:text-slate-400 font-semibold"
                 />
               </div>
             </div>
@@ -137,8 +139,8 @@ const Register = () => {
                     onClick={() => setFormData({ ...formData, gender: g })}
                     className={`py-2 rounded-xl text-xs font-semibold border transition-colors ${
                       formData.gender === g
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:text-slate-900'
                     }`}
                   >
                     {g}
@@ -150,8 +152,8 @@ const Register = () => {
 
           <div>
             <label className="font-semibold text-slate-700 block mb-1">College / Organization *</label>
-            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-slate-400">
-              <Building className="w-4 h-4 text-slate-400 mr-2" />
+            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-indigo-500 focus-within:bg-white transition-colors">
+              <Building className="w-4 h-4 text-indigo-600 mr-2" />
               <input
                 type="text"
                 required
@@ -159,12 +161,12 @@ const Register = () => {
                 value={formData.organization}
                 onChange={handleChange}
                 placeholder="e.g. PCCOER, Infosys, COEP"
-                className="bg-transparent text-xs text-slate-800 outline-none w-full"
+                className="bg-transparent text-xs text-slate-900 outline-none w-full placeholder:text-slate-400 font-semibold"
               />
             </div>
           </div>
 
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
             <label className="font-semibold text-slate-700 uppercase tracking-wider block text-[10px]">
               Vehicle Details (Optional - If offering rides)
             </label>
@@ -177,8 +179,8 @@ const Register = () => {
                   onClick={() => setFormData({ ...formData, vehicleType: vType })}
                   className={`py-2 rounded-xl text-xs font-semibold border transition-colors ${
                     formData.vehicleType === vType
-                      ? 'bg-emerald-700 text-white border-emerald-700'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
+                      : 'bg-white text-slate-600 border-slate-200 hover:text-slate-900'
                   }`}
                 >
                   {vType}
@@ -194,7 +196,7 @@ const Register = () => {
                   value={formData.makeModel}
                   onChange={handleChange}
                   placeholder="Vehicle Model (e.g. Honda City)"
-                  className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none"
+                  className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-indigo-500 font-medium"
                 />
                 <input
                   type="text"
@@ -202,7 +204,7 @@ const Register = () => {
                   value={formData.licensePlate}
                   onChange={handleChange}
                   placeholder="License Plate (e.g. MH 14 AB 1234)"
-                  className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none"
+                  className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-indigo-500 font-medium"
                 />
               </div>
             )}
@@ -216,24 +218,24 @@ const Register = () => {
               value={formData.bio}
               onChange={handleChange}
               placeholder="Tell your fellow commuters a bit about yourself..."
-              className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none w-full"
+              className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none w-full focus:border-indigo-500 focus:bg-white"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2"
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3.5 rounded-xl text-xs transition-all shadow-md shadow-slate-900/10 flex items-center justify-center gap-2"
           >
             <span>{loading ? 'Creating Account...' : 'Register Account'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-emerald-400" />
           </button>
 
         </form>
 
         <p className="text-xs text-center text-slate-500 mt-6">
           Already have an account?{' '}
-          <Link to="/login" className="text-slate-900 font-bold hover:underline">
+          <Link to="/login" className="text-indigo-600 font-bold hover:text-indigo-800">
             Log in here
           </Link>
         </p>

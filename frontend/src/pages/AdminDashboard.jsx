@@ -69,84 +69,93 @@ const AdminDashboard = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
       {/* Executive Admin Header */}
-      <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 card-shadow mb-8 relative overflow-hidden border border-slate-800 shadow-xl">
+      <div className="card-clean p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm mb-8 relative overflow-hidden">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-500 text-white flex items-center justify-center font-bold shadow-lg">
-              <Shield className="w-7 h-7" />
+            <div className="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-sm">
+              <Shield className="w-7 h-7 text-emerald-400" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">System Admin Operations</h1>
-                <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">System Admin Operations</h1>
+                <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">
                   LIVE DB ACTIVE
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Platform analytics, user moderation, ride monitoring & system controls
               </p>
             </div>
           </div>
 
-          <div className="flex bg-slate-800 p-1 rounded-2xl border border-slate-700">
+          <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
             <button
               onClick={() => setActiveTab('analytics')}
               className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
-                activeTab === 'analytics' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                activeTab === 'analytics'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Graphical Analytics
+              Analytics
             </button>
             <button
               onClick={() => setActiveTab('users')}
               className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
-                activeTab === 'users' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                activeTab === 'users'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              User Management ({usersList.length})
+              Users ({usersList.length})
             </button>
             <button
               onClick={() => setActiveTab('rides')}
               className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
-                activeTab === 'rides' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                activeTab === 'rides'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Global Rides ({ridesList.length})
+              Rides ({ridesList.length})
             </button>
           </div>
         </div>
       </div>
 
       {loading ? (
-        <p className="text-xs text-slate-400 text-center py-16">Loading operations dashboard...</p>
+        <div className="text-center py-16">
+          <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-xs text-slate-500">Loading operations dashboard...</p>
+        </div>
       ) : (
         <>
           {/* Top Metric Gauges */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white p-5 rounded-3xl border border-slate-200/90 card-shadow">
-              <span className="text-[10px] uppercase font-black text-slate-400 block tracking-wider">Registered Users</span>
+            <div className="card-clean p-5 rounded-3xl border border-slate-200 shadow-xs">
+              <span className="text-[10px] uppercase font-black text-indigo-600 block tracking-wider">Registered Users</span>
               <span className="text-2xl font-black text-slate-900 mt-0.5 block">{stats?.totalUsers || usersList.length}</span>
               <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-0.5 mt-1">
-                <TrendingUp className="w-3 h-3" /> +100% Verified Users
+                <TrendingUp className="w-3 h-3" /> 100% Verified
               </span>
             </div>
 
-            <div className="bg-white p-5 rounded-3xl border border-slate-200/90 card-shadow">
-              <span className="text-[10px] uppercase font-black text-slate-400 block tracking-wider">Active Search Rides</span>
-              <span className="text-2xl font-black text-indigo-600 mt-0.5 block">{stats?.activeRides || 0}</span>
-              <span className="text-[10px] text-indigo-600 font-bold block mt-1">Live Route Postings</span>
+            <div className="card-clean p-5 rounded-3xl border border-slate-200 shadow-xs">
+              <span className="text-[10px] uppercase font-black text-emerald-600 block tracking-wider">Active Search Rides</span>
+              <span className="text-2xl font-black text-slate-900 mt-0.5 block">{stats?.activeRides || 0}</span>
+              <span className="text-[10px] text-slate-500 font-medium block mt-1">Live Route Postings</span>
             </div>
 
-            <div className="bg-white p-5 rounded-3xl border border-slate-200/90 card-shadow">
-              <span className="text-[10px] uppercase font-black text-slate-400 block tracking-wider">Completed Rides</span>
-              <span className="text-2xl font-black text-purple-600 mt-0.5 block">{stats?.completedRides || 0}</span>
-              <span className="text-[10px] text-purple-600 font-bold block mt-1">Real-time Verified</span>
+            <div className="card-clean p-5 rounded-3xl border border-slate-200 shadow-xs">
+              <span className="text-[10px] uppercase font-black text-sky-600 block tracking-wider">Completed Rides</span>
+              <span className="text-2xl font-black text-slate-900 mt-0.5 block">{stats?.completedRides || 0}</span>
+              <span className="text-[10px] text-slate-500 font-medium block mt-1">Real-time Verified</span>
             </div>
 
-            <div className="bg-white p-5 rounded-3xl border border-slate-200/90 card-shadow">
-              <span className="text-[10px] uppercase font-black text-slate-400 block tracking-wider">Carbon Saved</span>
-              <span className="text-2xl font-black text-rose-500 mt-0.5 block">🌱 {stats?.totalCarbonSaved || 0} kg</span>
-              <span className="text-[10px] text-rose-500 font-bold block mt-1">Total CO₂ Reduction</span>
+            <div className="card-clean p-5 rounded-3xl border border-slate-200 shadow-xs">
+              <span className="text-[10px] uppercase font-bold text-amber-600 block tracking-wider">Carbon Saved</span>
+              <span className="text-2xl font-bold text-slate-900 mt-0.5 block">{stats?.totalCarbonSaved || 0} kg</span>
+              <span className="text-[10px] text-slate-500 font-medium block mt-1">Total CO2 Reduction</span>
             </div>
           </div>
 
@@ -157,19 +166,19 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
                 {/* Graphical Chart 1: Monthly Ride Activity Bar Chart */}
-                <div className="bg-white p-6 rounded-3xl border border-slate-200/90 card-shadow">
+                <div className="card-clean p-6 rounded-3xl border border-slate-200 shadow-sm">
                   <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-100">
                     <div className="flex items-center gap-2">
                       <BarChart3 className="w-5 h-5 text-indigo-600" />
                       <h3 className="font-black text-slate-900 text-base">Monthly Ride Volume Analysis</h3>
                     </div>
-                    <span className="text-[10px] font-extrabold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg">
+                    <span className="text-[10px] font-extrabold bg-slate-100 border border-slate-200 text-slate-800 px-2.5 py-1 rounded-lg">
                       Real-time Overview
                     </span>
                   </div>
 
                   {/* SVG Bar Chart Visualization */}
-                  <div className="h-64 flex items-end justify-between gap-3 pt-6 pb-2 px-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <div className="h-64 flex items-end justify-between gap-3 pt-6 pb-2 px-4 bg-slate-50 rounded-2xl border border-slate-200">
                     {[
                       { month: 'Jan', active: 12, completed: 18 },
                       { month: 'Feb', active: 19, completed: 25 },
@@ -187,16 +196,16 @@ const AdminDashboard = () => {
                           <div className="w-full flex items-end justify-center gap-1.5 h-full">
                             <div
                               style={{ height: `${activeH}%` }}
-                              className="w-1/2 bg-indigo-600 rounded-t-lg transition-all group-hover:bg-indigo-700"
+                              className="w-1/2 bg-indigo-600 rounded-t-lg transition-all group-hover:bg-indigo-500 shadow-2xs"
                               title={`Active: ${item.active}`}
                             />
                             <div
                               style={{ height: `${completedH}%` }}
-                              className="w-1/2 bg-gradient-to-t from-purple-600 to-rose-500 rounded-t-lg transition-all group-hover:opacity-90"
+                              className="w-1/2 bg-emerald-600 rounded-t-lg transition-all group-hover:bg-emerald-500"
                               title={`Completed: ${item.completed}`}
                             />
                           </div>
-                          <span className="text-[10px] font-extrabold text-slate-600 uppercase">{item.month}</span>
+                          <span className="text-[10px] font-extrabold text-slate-500 uppercase">{item.month}</span>
                         </div>
                       );
                     })}
@@ -204,22 +213,22 @@ const AdminDashboard = () => {
 
                   <div className="flex items-center justify-center gap-6 mt-4 text-xs font-bold text-slate-600">
                     <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 bg-indigo-600 rounded-sm" /> Active Listings
+                      <span className="w-3 h-3 bg-indigo-600 rounded-xs" /> Active Listings
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 bg-rose-500 rounded-sm" /> Completed Carpools
+                      <span className="w-3 h-3 bg-emerald-600 rounded-xs" /> Completed Carpools
                     </span>
                   </div>
                 </div>
 
                 {/* Graphical Chart 2: Campus / Organization Share Donut Visualization */}
-                <div className="bg-white p-6 rounded-3xl border border-slate-200/90 card-shadow">
+                <div className="card-clean p-6 rounded-3xl border border-slate-200 shadow-sm">
                   <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-100">
                     <div className="flex items-center gap-2">
-                      <PieChart className="w-5 h-5 text-purple-600" />
+                      <PieChart className="w-5 h-5 text-indigo-600" />
                       <h3 className="font-black text-slate-900 text-base">Campus & Tech Park Distribution</h3>
                     </div>
-                    <span className="text-[10px] font-extrabold bg-purple-50 text-purple-700 px-2.5 py-1 rounded-lg">
+                    <span className="text-[10px] font-extrabold bg-slate-100 border border-slate-200 text-slate-800 px-2.5 py-1 rounded-lg">
                       Network Breakdown
                     </span>
                   </div>
@@ -227,14 +236,14 @@ const AdminDashboard = () => {
                   <div className="space-y-4">
                     {Object.entries(campusCounts).map(([org, count], idx) => {
                       const percent = Math.round((count / totalUsersCount) * 100);
-                      const colors = ['bg-indigo-600', 'bg-purple-600', 'bg-rose-500', 'bg-amber-500'];
+                      const colors = ['bg-indigo-600', 'bg-emerald-600', 'bg-amber-600', 'bg-sky-600'];
                       const barColor = colors[idx % colors.length];
 
                       return (
-                        <div key={org} className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div key={org} className="p-3 bg-slate-50 rounded-2xl border border-slate-200">
                           <div className="flex justify-between text-xs font-bold mb-1">
                             <span className="text-slate-900">{org}</span>
-                            <span className="text-slate-600">{count} members ({percent}%)</span>
+                            <span className="text-slate-500">{count} members ({percent}%)</span>
                           </div>
                           <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
                             <div className={`h-2.5 ${barColor} rounded-full transition-all duration-500`} style={{ width: `${percent}%` }} />
@@ -248,25 +257,24 @@ const AdminDashboard = () => {
               </div>
 
               {/* Graphical Chart 3: Carbon Savings Growth Chart */}
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 card-shadow">
+              <div className="card-clean p-6 rounded-3xl border border-slate-200 shadow-sm">
                 <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
                   <div className="flex items-center gap-2">
-                    <Leaf className="w-5 h-5 text-rose-500" />
+                    <Leaf className="w-5 h-5 text-emerald-600" />
                     <h3 className="font-black text-slate-900 text-base">Cumulative Carbon Savings Trend (kg CO₂)</h3>
                   </div>
-                  <span className="text-xs font-black text-rose-500">
+                  <span className="text-xs font-black text-emerald-600">
                     Total: {(stats?.totalCarbonSaved || 0).toFixed(1)} kg CO₂
                   </span>
                 </div>
 
-                <div className="h-40 bg-slate-50 rounded-2xl border border-slate-100 p-4 flex items-end justify-between relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-rose-500/10 via-purple-500/5 to-transparent pointer-events-none" />
-                  {[10, 25, 45, 60, 95, 120, Math.max(130, Math.round(stats?.totalCarbonSaved * 10 || 140))].map((val, idx) => {
+                <div className="h-40 bg-slate-50 rounded-2xl border border-slate-200 p-4 flex items-end justify-between relative overflow-hidden">
+                  {[10, 25, 45, 60, 95, 120, Math.max(130, Math.round((stats?.totalCarbonSaved || 0) * 10 || 140))].map((val, idx) => {
                     const h = Math.min(100, Math.max(15, (val / 160) * 100));
                     return (
                       <div key={idx} className="flex-1 flex flex-col items-center gap-1 z-10">
-                        <span className="text-[9px] font-black text-slate-700">{val / 10} kg</span>
-                        <div style={{ height: `${h}%` }} className="w-2.5 bg-gradient-to-t from-purple-600 to-rose-500 rounded-full" />
+                        <span className="text-[9px] font-black text-slate-600">{val / 10} kg</span>
+                        <div style={{ height: `${h}%` }} className="w-2.5 bg-gradient-to-t from-emerald-600 to-sky-600 rounded-full" />
                       </div>
                     );
                   })}
@@ -278,11 +286,11 @@ const AdminDashboard = () => {
 
           {/* TAB 2: User Account Moderation */}
           {activeTab === 'users' && (
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/90 card-shadow overflow-x-auto">
+            <div className="card-clean p-6 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
               <h3 className="font-black text-slate-900 text-base mb-4">User Accounts Moderation</h3>
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 uppercase font-black tracking-wider">
+                  <tr className="border-b border-slate-200 text-slate-500 uppercase font-black tracking-wider">
                     <th className="pb-3">User</th>
                     <th className="pb-3">Organization</th>
                     <th className="pb-3">Role</th>
@@ -293,19 +301,19 @@ const AdminDashboard = () => {
                 <tbody className="divide-y divide-slate-100">
                   {usersList.map((u) => (
                     <tr key={u._id} className="hover:bg-slate-50">
-                      <td className="py-3.5 font-bold text-slate-900">{u.name} ({u.email})</td>
-                      <td className="py-3.5 text-slate-600 font-semibold">{u.organization}</td>
+                      <td className="py-3.5 font-bold text-slate-900">{u.name} <span className="text-slate-400 font-normal">({u.email})</span></td>
+                      <td className="py-3.5 text-slate-700 font-semibold">{u.organization}</td>
                       <td className="py-3.5 font-black uppercase text-[10px]">
-                        <span className={`px-2 py-0.5 rounded-md ${u.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'}`}>
+                        <span className={`px-2 py-0.5 rounded-md border ${u.role === 'admin' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
                           {u.role}
                         </span>
                       </td>
-                      <td className="py-3.5 font-black text-indigo-600">{u.trustScore} / 100</td>
+                      <td className="py-3.5 font-black text-slate-900">{u.trustScore} / 100</td>
                       <td className="py-3.5">
                         {u.role !== 'admin' && (
                           <button
                             onClick={() => handleDeleteUser(u._id)}
-                            className="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1 rounded-xl text-xs flex items-center gap-1 border border-rose-200"
+                            className="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1 rounded-xl text-xs flex items-center gap-1 border border-rose-200"
                           >
                             <Trash2 className="w-3.5 h-3.5" /> Delete User
                           </button>
@@ -320,11 +328,11 @@ const AdminDashboard = () => {
 
           {/* TAB 3: Global Rides Moderation */}
           {activeTab === 'rides' && (
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/90 card-shadow overflow-x-auto">
+            <div className="card-clean p-6 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
               <h3 className="font-black text-slate-900 text-base mb-4">Global Ride Postings Operations</h3>
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 uppercase font-black tracking-wider">
+                  <tr className="border-b border-slate-200 text-slate-500 uppercase font-black tracking-wider">
                     <th className="pb-3">Driver / Poster</th>
                     <th className="pb-3">Route</th>
                     <th className="pb-3">Vehicle</th>
@@ -338,17 +346,17 @@ const AdminDashboard = () => {
                     <tr key={r._id} className="hover:bg-slate-50">
                       <td className="py-3.5 font-bold text-slate-900">{r.driver?.name || 'Commuter'}</td>
                       <td className="py-3.5 font-semibold text-slate-700">{r.source} → {r.destination}</td>
-                      <td className="py-3.5 text-slate-600">{r.vehicleName} ({r.vehicleType})</td>
+                      <td className="py-3.5 text-slate-500">{r.vehicleName} ({r.vehicleType})</td>
                       <td className="py-3.5 font-black text-[10px] uppercase">
-                        <span className={`px-2 py-0.5 rounded-md ${r.status === 'active' ? 'bg-indigo-100 text-indigo-800' : 'bg-purple-100 text-purple-800'}`}>
+                        <span className={`px-2 py-0.5 rounded-md border ${r.status === 'active' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-slate-100 text-slate-800 border-slate-200'}`}>
                           {r.status}
                         </span>
                       </td>
-                      <td className="py-3.5 font-black text-indigo-600">₹{r.pricePerSeat}</td>
+                      <td className="py-3.5 font-black text-slate-900">₹{r.pricePerSeat}</td>
                       <td className="py-3.5">
                         <button
                           onClick={() => handleDeleteRide(r._id)}
-                          className="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1 rounded-xl text-xs flex items-center gap-1 border border-rose-200"
+                          className="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1 rounded-xl text-xs flex items-center gap-1 border border-rose-200"
                         >
                           <Trash2 className="w-3.5 h-3.5" /> Remove Post
                         </button>
