@@ -24,7 +24,7 @@ const getAIStatus = async (req, res) => {
 // @access  Public / Private
 const generateAIPlan = async (req, res, next) => {
   try {
-    const { destination, days, budget, travelers, travelStyle, interests } = req.body;
+    const { destination, days, budget, travelers, travelStyle, interests, transportMode } = req.body;
 
     if (!destination || !destination.trim()) {
       return res.status(400).json({ success: false, message: 'Please provide a destination for your trip plan' });
@@ -36,7 +36,8 @@ const generateAIPlan = async (req, res, next) => {
       budget: Number(budget) || 5000,
       travelers: Number(travelers) || 2,
       travelStyle: travelStyle || 'Balanced',
-      interests: interests || ''
+      interests: interests || '',
+      transportMode: transportMode || 'Train'
     });
 
     const isApiKeyConfigured = Boolean(

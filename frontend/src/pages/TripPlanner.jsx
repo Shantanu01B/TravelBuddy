@@ -23,11 +23,14 @@ import {
   X,
   Search,
   Check,
-  LogOut
+  LogOut,
+  Train,
+  Plane,
+  Bus
 } from 'lucide-react';
 import API from '../services/api';
 
-const POPULAR_DESTINATIONS = ['Goa', 'Lonavala', 'Udaipur', 'Mahabaleshwar', 'Manali', 'Pondicherry'];
+const POPULAR_DESTINATIONS = ['Udaipur', 'Rajasthan', 'Goa', 'Lonavala', 'Manali', 'Mahabaleshwar', 'Pondicherry'];
 
 const TripPlanner = () => {
   const { user } = useContext(AuthContext);
@@ -71,12 +74,13 @@ const TripPlanner = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
   const [aiInput, setAiInput] = useState({
-    destination: 'Goa',
+    destination: 'Udaipur',
     days: 3,
     budget: 8000,
     travelers: 2,
     travelStyle: 'Balanced',
-    interests: 'beaches, sunset points, authentic seafood, scooty rides'
+    transportMode: 'Train',
+    interests: 'palace heritage, lake boat rides, scenic sunsets, authentic food'
   });
   const [generatedPlan, setGeneratedPlan] = useState(null);
   const [expandedDay, setExpandedDay] = useState(1);
@@ -590,6 +594,20 @@ const TripPlanner = () => {
                           Curated Plan
                         </span>
                       )}
+                      {selectedTrip.aiPlan?.transportMode && (
+                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1">
+                          {selectedTrip.aiPlan.transportMode === 'Flight' ? (
+                            <Plane className="w-3 h-3 text-indigo-600" />
+                          ) : selectedTrip.aiPlan.transportMode === 'Train' ? (
+                            <Train className="w-3 h-3 text-indigo-600" />
+                          ) : selectedTrip.aiPlan.transportMode === 'Bus' ? (
+                            <Bus className="w-3 h-3 text-indigo-600" />
+                          ) : (
+                            <Car className="w-3 h-3 text-indigo-600" />
+                          )}
+                          <span>Transit: {selectedTrip.aiPlan.transportMode}</span>
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
                       Destination: <span className="font-semibold text-slate-800">{selectedTrip.destination}</span> • Dates: <span className="font-semibold text-slate-800">{selectedTrip.startDate} to {selectedTrip.endDate}</span>
@@ -847,6 +865,49 @@ const TripPlanner = () => {
                       {selectedTrip.aiPlan.days?.length || selectedTrip.aiPlan.days} Days Planned
                     </span>
                   </div>
+
+                  {/* Famous Must-Visit Tourist Spots Showcase */}
+                  {Array.isArray(selectedTrip.aiPlan.famousSpots) && selectedTrip.aiPlan.famousSpots.length > 0 && (
+                    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-rose-600" />
+                          <h4 className="font-extrabold text-slate-900 text-xs tracking-tight">
+                            Famous Must-Visit Tourist Spots in {selectedTrip.destination}
+                          </h4>
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-500">
+                          {selectedTrip.aiPlan.famousSpots.length} Iconic Attractions
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        {selectedTrip.aiPlan.famousSpots.map((spot, sIdx) => (
+                          <div key={sIdx} className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+                            <div>
+                              <div className="flex items-center justify-between gap-1.5 mb-1">
+                                <h5 className="font-bold text-slate-900 text-xs line-clamp-1">{spot.name}</h5>
+                                {spot.category && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 flex-shrink-0">
+                                    {spot.category}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-slate-600 leading-relaxed">
+                                {spot.description}
+                              </p>
+                            </div>
+                            {spot.estimatedTime && (
+                              <div className="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                                <span>Recommended Visit:</span>
+                                <span className="font-semibold text-slate-700">{spot.estimatedTime}</span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Budget Allocation Breakdown */}
                   {selectedTrip.aiPlan.budgetAmounts && (
@@ -1117,6 +1178,37 @@ const TripPlanner = () => {
                 </div>
               </div>
 
+              {/* Mode of Transport Selector */}
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">Mode of Transport</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {[
+                    { id: 'Train', label: 'Train', icon: Train },
+                    { id: 'Flight', label: 'Flight', icon: Plane },
+                    { id: 'Bus', label: 'Bus', icon: Bus },
+                    { id: 'Car', label: 'Car / Road Trip', icon: Car }
+                  ].map((m) => {
+                    const IconComponent = m.icon;
+                    const isSelected = aiInput.transportMode === m.id;
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setAiInput({ ...aiInput, transportMode: m.id })}
+                        className={`p-2.5 rounded-xl text-[11px] font-bold border transition-all flex items-center justify-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                            : 'bg-slate-50 text-slate-600 border-slate-200 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
+                      >
+                        <IconComponent className={`w-3.5 h-3.5 ${isSelected ? 'text-amber-400' : 'text-slate-400'}`} />
+                        <span>{m.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Optional Interests */}
               <div>
                 <label className="font-bold text-slate-700 block mb-1">Interests & Preferences (Optional)</label>
@@ -1124,7 +1216,7 @@ const TripPlanner = () => {
                   type="text"
                   value={aiInput.interests}
                   onChange={(e) => setAiInput({ ...aiInput, interests: e.target.value })}
-                  placeholder="e.g. scenic viewpoints, fort trekking, street food, sunsets"
+                  placeholder="e.g. palace heritage, scenic viewpoints, authentic food, sunsets"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white"
                 />
               </div>
@@ -1157,10 +1249,26 @@ const TripPlanner = () => {
                 {/* Title & Overview Banner */}
                 <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <span className="text-[10px] font-bold uppercase text-indigo-700 tracking-wider">
-                      Curated Itinerary
-                    </span>
-                    <h4 className="text-base font-black text-slate-900 leading-tight mt-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="text-[10px] font-bold uppercase text-indigo-700 tracking-wider">
+                        Curated Itinerary
+                      </span>
+                      {generatedPlan.transportMode && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-indigo-200 text-slate-700 flex items-center gap-1">
+                          {generatedPlan.transportMode === 'Flight' ? (
+                            <Plane className="w-3 h-3 text-indigo-600" />
+                          ) : generatedPlan.transportMode === 'Train' ? (
+                            <Train className="w-3 h-3 text-indigo-600" />
+                          ) : generatedPlan.transportMode === 'Bus' ? (
+                            <Bus className="w-3 h-3 text-indigo-600" />
+                          ) : (
+                            <Car className="w-3 h-3 text-indigo-600" />
+                          )}
+                          <span>Transit: {generatedPlan.transportMode}</span>
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="text-base font-black text-slate-900 leading-tight">
                       {generatedPlan.tripTitle}
                     </h4>
                     <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
@@ -1176,6 +1284,49 @@ const TripPlanner = () => {
                     </span>
                   </div>
                 </div>
+
+                {/* Famous Must-Visit Tourist Spots Showcase */}
+                {Array.isArray(generatedPlan.famousSpots) && generatedPlan.famousSpots.length > 0 && (
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-rose-600" />
+                        <h5 className="font-extrabold text-slate-900 text-xs tracking-tight">
+                          Famous Must-Visit Tourist Spots in {aiInput.destination || generatedPlan.destination}
+                        </h5>
+                      </div>
+                      <span className="text-[10px] font-bold text-slate-500">
+                        {generatedPlan.famousSpots.length} Iconic Attractions
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {generatedPlan.famousSpots.map((spot, sIdx) => (
+                        <div key={sIdx} className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center justify-between gap-1.5 mb-1">
+                              <h6 className="font-bold text-slate-900 text-xs line-clamp-1">{spot.name}</h6>
+                              {spot.category && (
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 flex-shrink-0">
+                                  {spot.category}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-slate-600 leading-relaxed">
+                              {spot.description}
+                            </p>
+                          </div>
+                          {spot.estimatedTime && (
+                            <div className="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                              <span>Recommended Visit:</span>
+                              <span className="font-semibold text-slate-700">{spot.estimatedTime}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Structured Budget Allocation Cards */}
                 {generatedPlan.budgetAmounts && (
