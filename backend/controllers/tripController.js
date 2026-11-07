@@ -1,4 +1,5 @@
 const Trip = require('../models/Trip');
+const Notification = require('../models/Notification');
 const { generateTripPlanWithGemini } = require('../services/geminiService');
 
 // @desc    Check Gemini API connection status
@@ -59,7 +60,7 @@ const generateAIPlan = async (req, res, next) => {
 // @access  Private
 const createTrip = async (req, res, next) => {
   try {
-    const { title, destination, budget, startDate, endDate, notes, members, aiPlan } = req.body;
+    const { title, destination, budget, startDate, endDate, notes, members, aiPlan, maxMembers } = req.body;
 
     const memberList = Array.isArray(members) ? members : [];
     if (!memberList.includes(req.user._id.toString())) {
@@ -74,12 +75,13 @@ const createTrip = async (req, res, next) => {
       endDate,
       creator: req.user._id,
       members: memberList,
+      maxMembers: Number(maxMembers) || 6,
       notes: notes || '',
       aiPlan: aiPlan || null
     });
 
     const populatedTrip = await Trip.findById(trip._id)
-      .populate('creator', 'name email avatar')
+      .populate('creator', 'name email avatar organization')
       .populate('members', 'name email avatar organization');
 
     res.status(201).json({
@@ -175,11 +177,122 @@ const deleteTrip = async (req, res, next) => {
   }
 };
 
+// @desc    Get all community upcoming trips to explore and join
+// @route   GET /api/trips/explore
+// @access  Private
+const getExploreTrips = async (req, res, next) => {
+  try {
+    const trips = await Trip.find({ status: 'Upcoming' })
+      .populate('creator', 'name email avatar organization')
+      .populate('members', 'name email avatar organization')
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      data: trips
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Join a community trip plan
+// @route   POST /api/trips/:id/join
+// @access  Private
+const joinTrip = async (req, res, next) => {
+  try {
+    const trip = await Trip.findById(req.params.id)
+      .populate('creator', 'name email avatar organization')
+      .populate('members', 'name email avatar organization');
+
+    if (!trip) {
+      return res.status(404).json({ success: false, message: 'Trip plan not found' });
+    }
+
+    const alreadyJoined = trip.members.some(
+      (m) => (m._id || m).toString() === req.user._id.toString()
+    );
+
+    if (alreadyJoined) {
+      return res.status(400).json({ success: false, message: 'You have already joined this trip plan' });
+    }
+
+    if (trip.maxMembers && trip.members.length >= trip.maxMembers) {
+      return res.status(400).json({ success: false, message: 'This trip group is already full' });
+    }
+
+    trip.members.push(req.user._id);
+    await trip.save();
+
+    // Notify trip creator
+    if (trip.creator._id.toString() !== req.user._id.toString()) {
+      try {
+        await Notification.create({
+          user: trip.creator._id,
+          message: `${req.user.name} joined your trip plan to ${trip.destination}! (${trip.members.length} travelers now)`,
+          type: 'trip_joined'
+        });
+      } catch (notifErr) {
+        console.warn('Trip join notification error:', notifErr.message);
+      }
+    }
+
+    const updatedTrip = await Trip.findById(trip._id)
+      .populate('creator', 'name email avatar organization')
+      .populate('members', 'name email avatar organization');
+
+    res.json({
+      success: true,
+      message: `Successfully joined "${trip.title}"!`,
+      data: updatedTrip
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Leave a joined trip plan
+// @route   POST /api/trips/:id/leave
+// @access  Private
+const leaveTrip = async (req, res, next) => {
+  try {
+    const trip = await Trip.findById(req.params.id);
+
+    if (!trip) {
+      return res.status(404).json({ success: false, message: 'Trip plan not found' });
+    }
+
+    if (trip.creator.toString() === req.user._id.toString()) {
+      return res.status(400).json({ success: false, message: 'The trip organizer cannot leave their own trip.' });
+    }
+
+    trip.members = trip.members.filter(
+      (m) => m.toString() !== req.user._id.toString()
+    );
+    await trip.save();
+
+    const updatedTrip = await Trip.findById(trip._id)
+      .populate('creator', 'name email avatar organization')
+      .populate('members', 'name email avatar organization');
+
+    res.json({
+      success: true,
+      message: `You have left "${trip.title}"`,
+      data: updatedTrip
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAIStatus,
   generateAIPlan,
   createTrip,
   getUserTrips,
+  getExploreTrips,
+  joinTrip,
+  leaveTrip,
   updateTrip,
   deleteTrip
 };

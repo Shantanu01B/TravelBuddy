@@ -23,6 +23,7 @@ const notificationSchema = new mongoose.Schema(
         'ride_rejected',
         'badge_earned',
         'trip_reminder',
+        'trip_joined',
         'general'
       ],
       default: 'general'

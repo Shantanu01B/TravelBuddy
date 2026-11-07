@@ -36,6 +36,11 @@ const tripSchema = new mongoose.Schema(
         ref: 'User'
       }
     ],
+    maxMembers: {
+      type: Number,
+      default: 6,
+      min: 2
+    },
     notes: {
       type: String,
       default: ''

@@ -5,6 +5,9 @@ const {
   generateAIPlan,
   createTrip,
   getUserTrips,
+  getExploreTrips,
+  joinTrip,
+  leaveTrip,
   updateTrip,
   deleteTrip
 } = require('../controllers/tripController');
@@ -14,9 +17,12 @@ const { protect } = require('../middleware/authMiddleware');
 router.get('/ai-status', getAIStatus);
 router.post('/ai-plan', generateAIPlan);
 
-// Standard Trip Operations
+// Trip Operations & Community Joining
 router.post('/', protect, createTrip);
 router.get('/', protect, getUserTrips);
+router.get('/explore', protect, getExploreTrips);
+router.post('/:id/join', protect, joinTrip);
+router.post('/:id/leave', protect, leaveTrip);
 router.put('/:id', protect, updateTrip);
 router.delete('/:id', protect, deleteTrip);
 
