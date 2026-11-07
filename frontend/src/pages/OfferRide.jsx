@@ -70,6 +70,12 @@ const OfferRide = () => {
       return;
     }
 
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (date < todayStr) {
+      setError('Ride date cannot be in the past. Please select today or an upcoming date.');
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await API.post('/rides', {
@@ -241,6 +247,7 @@ const OfferRide = () => {
               <input
                 type="date"
                 required
+                min={new Date().toISOString().split('T')[0]}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-indigo-500 focus:bg-white"

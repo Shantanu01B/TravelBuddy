@@ -13,6 +13,12 @@ const createRideRequest = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Ride post not found' });
     }
 
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    if (ride.date < todayStr || ride.status !== 'active') {
+      return res.status(400).json({ success: false, message: 'This ride has expired and is no longer open for booking' });
+    }
+
     if (ride.driver._id.toString() === req.user._id.toString()) {
       return res.status(400).json({ success: false, message: 'You cannot request your own offered ride' });
     }

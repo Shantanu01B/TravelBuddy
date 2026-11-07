@@ -209,6 +209,7 @@ const Home = () => {
                 </div>
                 <input
                   type="date"
+                  min={new Date().toISOString().split('T')[0]}
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   className="bg-transparent text-xs text-slate-900 font-semibold outline-none w-full"

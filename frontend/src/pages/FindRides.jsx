@@ -38,7 +38,8 @@ const FindRides = () => {
 
       const res = await API.get(`/rides/search?${params.toString()}`);
       if (res.data.success) {
-        setRides(res.data.data);
+        const todayStr = new Date().toISOString().split('T')[0];
+        setRides(res.data.data.filter(r => r.date >= todayStr));
       }
     } catch (err) {
       console.error(err);
@@ -137,6 +138,7 @@ const FindRides = () => {
               <Calendar className="w-3.5 h-3.5 text-sky-600 flex-shrink-0" />
               <input
                 type="date"
+                min={new Date().toISOString().split('T')[0]}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="bg-transparent text-xs font-semibold text-slate-900 outline-none w-full"

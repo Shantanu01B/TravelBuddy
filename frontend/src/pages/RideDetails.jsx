@@ -13,6 +13,7 @@ const RideDetails = () => {
 
   const [ride, setRide] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [expiredMessage, setExpiredMessage] = useState('');
 
   const [pickupStop, setPickupStop] = useState('');
   const [dropStop, setDropStop] = useState('');
@@ -36,6 +37,9 @@ const RideDetails = () => {
         }
       }
     } catch (err) {
+      if (err.response?.status === 410 || err.response?.data?.isExpired) {
+        setExpiredMessage(err.response?.data?.message || 'This ride has expired and is no longer available.');
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -82,6 +86,28 @@ const RideDetails = () => {
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
         <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
         <p className="text-xs text-slate-500">Loading ride details...</p>
+      </div>
+    );
+  }
+
+  if (expiredMessage) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-16 text-center">
+        <div className="card-clean p-8 rounded-3xl border border-slate-200 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-3 border border-amber-200">
+            <Clock className="w-6 h-6" />
+          </div>
+          <h2 className="text-lg font-black text-slate-900">Ride Offer Expired</h2>
+          <p className="text-xs text-slate-500 mt-1 mb-6">
+            {expiredMessage}
+          </p>
+          <button
+            onClick={() => navigate('/find-rides')}
+            className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs shadow-xs"
+          >
+            Browse Available Rides
+          </button>
+        </div>
       </div>
     );
   }
