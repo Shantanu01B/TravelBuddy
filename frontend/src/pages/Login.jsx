@@ -1,22 +1,27 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Car, Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 
 const Login = () => {
   const { login, loading } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] = useState('rahul@pccoer.edu.in');
   const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
+
+  const from = location.state?.from?.pathname
+    ? `${location.state.from.pathname}${location.state.from.search || ''}`
+    : '/dashboard';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     const res = await login(email, password);
     if (res.success) {
-      navigate('/dashboard');
+      navigate(from, { replace: true });
     } else {
       setError(res.message);
     }

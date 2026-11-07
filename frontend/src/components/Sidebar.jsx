@@ -16,7 +16,10 @@ import {
   Menu,
   X,
   ChevronRight,
-  ShieldAlert
+  ShieldAlert,
+  Home as HomeIcon,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 import API from '../services/api';
 
@@ -62,7 +65,14 @@ const Sidebar = () => {
     return false;
   };
 
-  const navLinks = [
+  const publicLinks = [
+    { label: 'Home', path: '/', icon: HomeIcon, color: 'text-indigo-600', activeClass: 'bg-indigo-50 text-indigo-900 border-indigo-200' },
+    { label: 'Log In', path: '/login', icon: LogIn, color: 'text-emerald-600', activeClass: 'bg-emerald-50 text-emerald-900 border-emerald-200' },
+    { label: 'Create Account', path: '/register', icon: UserPlus, color: 'text-amber-600', activeClass: 'bg-amber-50 text-amber-900 border-amber-200' }
+  ];
+
+  const authenticatedLinks = [
+    { label: 'Home', path: '/', icon: HomeIcon, color: 'text-slate-700', activeClass: 'bg-slate-100 text-slate-900 border-slate-300' },
     { label: 'Find Rides', path: '/find-rides', icon: Search, color: 'text-indigo-600', activeClass: 'bg-indigo-50 text-indigo-900 border-indigo-200' },
     { label: 'Offer Ride', path: '/offer-ride', icon: PlusCircle, color: 'text-emerald-600', activeClass: 'bg-emerald-50 text-emerald-900 border-emerald-200' },
     { label: 'Trip Planner', path: '/trips', icon: Compass, color: 'text-amber-600', activeClass: 'bg-amber-50 text-amber-900 border-amber-200' },
@@ -98,9 +108,9 @@ const Sidebar = () => {
         {/* Primary Navigation */}
         <div className="space-y-1 mb-6">
           <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 block mb-2">
-            Main Menu
+            {user ? 'Main Menu' : 'Navigation'}
           </span>
-          {navLinks.map((item) => {
+          {(user ? authenticatedLinks : publicLinks).map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
             return (
@@ -119,6 +129,26 @@ const Sidebar = () => {
             );
           })}
         </div>
+
+        {/* Guest Information Card (Only if Logged Out) */}
+        {!user && (
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs mt-2">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Shield className="w-4 h-4 text-emerald-600" />
+              <span className="font-bold text-slate-900">Verified Access</span>
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed mb-3 font-medium">
+              Sign in with your campus or office email to search rides, offer seats, and plan trips.
+            </p>
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-1 font-bold text-indigo-600 hover:text-indigo-800 text-[11px]"
+            >
+              <span>Sign in to unlock</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
 
         {/* User Workspace (If Logged In) */}
         {user && (

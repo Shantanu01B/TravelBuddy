@@ -26,4 +26,18 @@ API.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+// Auto-redirect to login on 401 Unauthorized
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('travelbuddy_user');
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login') && window.location.pathname !== '/') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default API;

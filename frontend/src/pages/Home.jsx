@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import { Search, MapPin, Calendar, ArrowRight, Zap, Navigation, ShieldCheck } from 'lucide-react';
 
 const QUICK_CORRIDORS = [
@@ -10,6 +11,7 @@ const QUICK_CORRIDORS = [
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('find'); // 'find', 'split', 'offer'
   const [pickup, setPickup] = useState('');
   const [drop, setDrop] = useState('');
@@ -18,31 +20,47 @@ const Home = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (activeTab === 'offer') {
-      navigate('/offer-ride');
-      return;
-    }
     const params = new URLSearchParams();
     if (pickup) params.append('pickup', pickup);
     if (drop) params.append('drop', drop);
     if (date) params.append('date', date);
     if (activeTab === 'split') params.append('vehicleType', 'Auto Share');
-    navigate(`/find-rides?${params.toString()}`);
+
+    const targetPath = activeTab === 'offer' ? '/offer-ride' : '/find-rides';
+    const targetSearch = activeTab === 'offer' ? '' : (params.toString() ? `?${params.toString()}` : '');
+
+    if (!user) {
+      navigate('/login', { state: { from: { pathname: targetPath, search: targetSearch } } });
+      return;
+    }
+
+    if (activeTab === 'offer') {
+      navigate('/offer-ride');
+    } else {
+      navigate(`/find-rides${targetSearch}`);
+    }
   };
 
   const handleTagClick = (tag) => {
     setSelectedTag(tag);
+    let target = '/find-rides';
     if (tag === 'Auto Splits') {
-      navigate('/find-rides?vehicleType=Auto%20Share');
+      target = '/find-rides?vehicleType=Auto%20Share';
     } else if (tag === 'Tech Parks') {
-      navigate('/find-rides?drop=Hinjawadi');
+      target = '/find-rides?drop=Hinjawadi';
     } else if (tag === 'Campus Routes') {
-      navigate('/find-rides?drop=Ravet');
+      target = '/find-rides?drop=Ravet';
     } else if (tag === 'Daily Shifts') {
-      navigate('/find-rides?community=PCCOER');
-    } else {
-      navigate('/find-rides');
+      target = '/find-rides?community=PCCOER';
     }
+
+    if (!user) {
+      const [pathname, search] = target.split('?');
+      navigate('/login', { state: { from: { pathname, search: search ? `?${search}` : '' } } });
+      return;
+    }
+
+    navigate(target);
   };
 
   const handleQuickCorridorSelect = (corridor) => {

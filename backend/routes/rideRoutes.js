@@ -10,9 +10,9 @@ const {
 const { protect } = require('../middleware/authMiddleware');
 
 router.post('/', protect, createRide);
-router.get('/search', searchRides);
+router.get('/search', protect, searchRides);
 router.get('/my-offered', protect, getMyOfferedRides);
-router.get('/:id', getRideById);
+router.get('/:id', protect, getRideById);
 router.delete('/:id', protect, deleteRide);
 
 module.exports = router;

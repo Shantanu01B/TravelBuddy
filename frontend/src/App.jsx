@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
 import Sidebar from './components/Sidebar';
@@ -31,17 +31,17 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/find-rides" element={<FindRides />} />
-              <Route path="/rides/:id" element={<RideDetails />} />
-              <Route path="/destinations" element={<Destinations />} />
-              <Route path="/community" element={<CommunityFeed />} />
 
-              {/* Protected User Routes */}
+              {/* Protected Authenticated Routes */}
               <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/find-rides" element={<FindRides />} />
+                <Route path="/rides/:id" element={<RideDetails />} />
                 <Route path="/offer-ride" element={<OfferRide />} />
                 <Route path="/my-rides" element={<MyRides />} />
                 <Route path="/trips" element={<TripPlanner />} />
+                <Route path="/destinations" element={<Destinations />} />
+                <Route path="/community" element={<CommunityFeed />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
               </Route>
 
@@ -49,6 +49,9 @@ function App() {
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminDashboard />} />
               </Route>
+
+              {/* Fallback to Home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
         </div>

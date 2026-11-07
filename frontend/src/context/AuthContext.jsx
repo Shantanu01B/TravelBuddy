@@ -26,6 +26,9 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Failed to refresh profile:', err);
+      if (err.response?.status === 401) {
+        logout();
+      }
     }
   };
 

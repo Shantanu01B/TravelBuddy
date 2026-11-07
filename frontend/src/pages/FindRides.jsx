@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import RideCard from '../components/RideCard';
 import { Search, MapPin, Building, Calendar, Car, ArrowUpDown, PlusCircle, Sparkles } from 'lucide-react';
@@ -10,27 +10,31 @@ const FindRides = () => {
   const [pickup, setPickup] = useState(searchParams.get('pickup') || '');
   const [drop, setDrop] = useState(searchParams.get('drop') || '');
   const [date, setDate] = useState(searchParams.get('date') || '');
-  const [community, setCommunity] = useState('All');
+  const [community, setCommunity] = useState(searchParams.get('community') || 'All');
   const [vehicleType, setVehicleType] = useState(searchParams.get('vehicleType') || 'All');
   const [sort, setSort] = useState('price_low');
 
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isInitialMount = useRef(true);
 
-  useEffect(() => {
-    fetchRides();
-  }, [community, vehicleType, sort]);
-
-  const fetchRides = async (overridePickup = pickup, overrideDrop = drop) => {
+  const fetchRides = async (
+    overridePickup = pickup,
+    overrideDrop = drop,
+    overrideDate = date,
+    overrideCommunity = community,
+    overrideVehicleType = vehicleType,
+    overrideSort = sort
+  ) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (overridePickup) params.append('pickup', overridePickup);
       if (overrideDrop) params.append('drop', overrideDrop);
-      if (date) params.append('date', date);
-      if (community !== 'All') params.append('community', community);
-      if (vehicleType !== 'All') params.append('vehicleType', vehicleType);
-      if (sort) params.append('sort', sort);
+      if (overrideDate) params.append('date', overrideDate);
+      if (overrideCommunity && overrideCommunity !== 'All') params.append('community', overrideCommunity);
+      if (overrideVehicleType && overrideVehicleType !== 'All') params.append('vehicleType', overrideVehicleType);
+      if (overrideSort) params.append('sort', overrideSort);
 
       const res = await API.get(`/rides/search?${params.toString()}`);
       if (res.data.success) {
@@ -43,9 +47,31 @@ const FindRides = () => {
     }
   };
 
+  useEffect(() => {
+    const p = searchParams.get('pickup') || '';
+    const d = searchParams.get('drop') || '';
+    const dt = searchParams.get('date') || '';
+    const vt = searchParams.get('vehicleType') || 'All';
+    const c = searchParams.get('community') || 'All';
+    setPickup(p);
+    setDrop(d);
+    setDate(dt);
+    setVehicleType(vt);
+    setCommunity(c);
+    fetchRides(p, d, dt, c, vt, sort);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    fetchRides(pickup, drop, date, community, vehicleType, sort);
+  }, [community, vehicleType, sort]);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    fetchRides();
+    fetchRides(pickup, drop, date, community, vehicleType, sort);
   };
 
   return (
